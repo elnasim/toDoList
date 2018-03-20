@@ -26,10 +26,13 @@ class App extends Component {
     let ref = firebase.database().ref();
     ref.on('value', (snapshot) => {
       let data = snapshot.val();
-      this.setState({
-        data: data,
-        counter: data.length
-      })
+      if (data !== null) {
+        this.setState({
+          data: data,
+          counter: data.length
+        })
+      }
+
     }, (error) => {
       alert('error connect db')
     });
@@ -45,18 +48,18 @@ class App extends Component {
     })
   };
 
-  removeItem = () => {
+  removeItem = (e) => {
     let ref = firebase.database().ref();
-    console.log('--->', this);
-    // ref.update({
-    //   1: {},
-    // })
+    let id = e.target.id;
+    ref.update({
+      [id]: {},
+    })
   };
 
   render() {
 
     const todoItems = this.state.data.map((item, key) => {
-      return <TodoItem key={key} title={item.title} text={item.text} remove={this.removeItem}/>
+      return <TodoItem key={key} title={item.title} text={item.text} id={key} remove={this.removeItem}/>
     });
 
     return (
