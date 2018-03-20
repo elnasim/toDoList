@@ -27,12 +27,15 @@ class App extends Component {
     ref.on('value', (snapshot) => {
       let data = snapshot.val();
       if (data !== null) {
+        let key, size = 0;
+        for (key in data) {
+          if (data.hasOwnProperty(key)) size++;
+        }
         this.setState({
           data: data,
-          counter: data.length
+          counter: size
         })
       }
-
     }, (error) => {
       alert('error connect db')
     });
@@ -40,27 +43,33 @@ class App extends Component {
 
   addNew = () => {
     let ref = firebase.database().ref();
+    let key = ref.push().key;
     ref.update({
-      [this.state.counter]: {
+      [key]: {
         title: "test",
         text: 30
-      },
+      }
     })
   };
 
   removeItem = (e) => {
-    let ref = firebase.database().ref();
     let id = e.target.id;
-    ref.update({
-      [id]: {},
-    })
+    let ref = firebase.database().ref('/' + id);
+    ref.remove();
   };
 
   render() {
 
-    const todoItems = this.state.data.map((item, key) => {
-      return <TodoItem key={key} title={item.title} text={item.text} id={key} remove={this.removeItem}/>
-    });
+    let todoItems;
+    if (this.state.counter > 1) {
+      todoItems = this.state.data.map((item, key) => {
+        return <TodoItem key={key} title={item.title} text={item.text} id={key} remove={this.removeItem}/>
+      });
+    } else {
+      console.log('--->', this.state.data);
+      todoItems = ''
+    }
+
 
     return (
       <div className="App">
