@@ -19,24 +19,44 @@ class App extends Component {
 
   state = {
     data: [],
+    counter: ''
   };
 
   componentDidMount() {
     let ref = firebase.database().ref();
     ref.on('value', (snapshot) => {
-      let data = snapshot.val().data;
+      let data = snapshot.val();
       this.setState({
-        data: data
+        data: data,
+        counter: data.length
       })
     }, (error) => {
       alert('error connect db')
     });
   }
 
+  addNew = () => {
+    let ref = firebase.database().ref();
+    ref.update({
+      [this.state.counter]: {
+        title: "test",
+        text: 30
+      },
+    })
+  };
+
+  removeItem = () => {
+    let ref = firebase.database().ref();
+    console.log('--->', this);
+    // ref.update({
+    //   1: {},
+    // })
+  };
+
   render() {
 
     const todoItems = this.state.data.map((item, key) => {
-      return <TodoItem key={key} title={item.title} text={item.text}/>
+      return <TodoItem key={key} title={item.title} text={item.text} remove={this.removeItem}/>
     });
 
     return (
@@ -47,9 +67,9 @@ class App extends Component {
         </header>
         <section className="app-body">
           {todoItems}
-          <div className="todo-new-item">
+          <button onClick={this.addNew} className="todo-new-item">
             добавить новую задачу
-          </div>
+          </button>
         </section>
       </div>
     );
