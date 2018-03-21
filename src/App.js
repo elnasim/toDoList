@@ -39,7 +39,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="header">
-          <img src={logo} className="App-logo" alt="logo"/>
+          <img src={logo.slice(1)} className="App-logo" alt="logo"/>
           <h1 className="App-title">TodoList</h1>
         </header>
         <section className="app-body">
