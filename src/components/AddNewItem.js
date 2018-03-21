@@ -4,7 +4,6 @@ import firebase from 'firebase';
 class AddNewItem extends Component {
 
   addNew = () => {
-    console.log('--->', 'addNew');
     const newItem = {
       title: 'Заголовок',
       text: 'текст'

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import firebase from 'firebase';
+import TextBlock from "./TextBlock";
 
 class TodoItem extends Component {
 
@@ -12,10 +13,10 @@ class TodoItem extends Component {
     return (
       <div className="todo-item">
         <div className="todo-item__topline">
-          <div className="todo-item__title">{this.props.title}</div>
+          <TextBlock id={this.props.id} type={'title'} className={'todo-item__title'} text={this.props.title}/>
           <button onClick={this.removeItem} className="todo-item__remove">x</button>
         </div>
-        <div className="todo-item__text">{this.props.text}</div>
+        <TextBlock id={this.props.id} type={'text'} className={'todo-item__text'} text={this.props.text}/>
       </div>
     );
   }
