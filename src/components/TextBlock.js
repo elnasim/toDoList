@@ -2,28 +2,17 @@ import React, {Component} from 'react';
 import firebase from 'firebase';
 
 class TextBlock extends Component {
-  state = {
-    isEdit: false,
-    text: ''
-  };
 
-  handleClick = (e) => {
-    if (this.state.isEdit) {
-      let data = {
-        [this.props.type]: e.target.value
-      };
-      firebase.database().ref(this.props.id).update(data);
-    }
-    this.setState({
-      isEdit: !this.state.isEdit
-    })
+  handleChange = () => {
+    const data = {
+      [this.props.type]: this.input.value
+    };
+    firebase.database().ref(this.props.id).update(data);
   };
 
   render() {
     return (
-      <div>
-        {this.state.isEdit ? <input onClick={this.handleClick} className='editField'></input> : <div onClick={this.handleClick} className={this.props.className}>{this.props.text}</div>}
-      </div>
+      <textarea onChange={this.handleChange} className={this.props.className} value={this.props.text} ref={input => this.input = input}></textarea>
     )
   }
 }
