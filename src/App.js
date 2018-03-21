@@ -1,8 +1,12 @@
 import React, {Component} from 'react';
+import firebase from "firebase";
+import ReactMixin from 'react-mixin';
+import ReactFireMixin from 'reactfire';
 import logo from './logo.svg';
 import './App.css';
 import TodoItem from "./components/TodoItem";
-import firebase from "firebase";
+import AddNewItem from "./components/AddNewItem";
+
 
 const config = {
   apiKey: "AIzaSyBB1rxQPx_6zsKmuSd_mgyQIaCfmvLhpOE",
@@ -23,53 +27,14 @@ class App extends Component {
   };
 
   componentDidMount() {
-    let ref = firebase.database().ref();
-    ref.on('value', (snapshot) => {
-      let data = snapshot.val();
-      if (data !== null) {
-        let key, size = 0;
-        for (key in data) {
-          if (data.hasOwnProperty(key)) size++;
-        }
-        this.setState({
-          data: data,
-          counter: size
-        })
-      }
-    }, (error) => {
-      alert('error connect db')
-    });
+    this.bindAsArray(firebase.database().ref(), 'data');
   }
-
-  addNew = () => {
-    let ref = firebase.database().ref();
-    let key = ref.push().key;
-    ref.update({
-      [key]: {
-        title: "test",
-        text: 30
-      }
-    })
-  };
-
-  removeItem = (e) => {
-    let id = e.target.id;
-    let ref = firebase.database().ref('/' + id);
-    ref.remove();
-  };
 
   render() {
 
-    let todoItems;
-    if (this.state.counter > 1) {
-      todoItems = this.state.data.map((item, key) => {
-        return <TodoItem key={key} title={item.title} text={item.text} id={key} remove={this.removeItem}/>
-      });
-    } else {
-      console.log('--->', this.state.data);
-      todoItems = ''
-    }
-
+    const todoItems = this.state.data.map((item, key) => {
+      return <TodoItem key={key} title={item.title} text={item.text} id={item['.key']}/>
+    });
 
     return (
       <div className="App">
@@ -79,13 +44,13 @@ class App extends Component {
         </header>
         <section className="app-body">
           {todoItems}
-          <button onClick={this.addNew} className="todo-new-item">
-            добавить новую задачу
-          </button>
+          <AddNewItem/>
         </section>
       </div>
     );
   }
 }
+
+ReactMixin(App.prototype, ReactFireMixin);
 
 export default App;
